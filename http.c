@@ -2064,14 +2064,7 @@ static int http_request_reauth(const char *url,
 			       void *result, int target,
 			       struct http_get_options *options)
 {
-	fprintf(stderr, _("KD test | password(40): '%s'...\n"), url);
-	fprintf(stderr, _("KD test | password(40): '%s'...\n"), options.effective_url);
-	fprintf(stderr, _("KD test | password(40): '%s'...\n"), options.base_url);
-	fprintf(stderr, _("KD test | password(40): '%s'...\n"), options.extra_headers);
-
 	int ret = http_request(url, result, target, options);
-
-	fprintf(stderr, _("KD test | password(41): '%s'...\n"), ret);
 
 	if (ret != HTTP_OK && ret != HTTP_REAUTH)
 		return ret;
@@ -2111,10 +2104,7 @@ static int http_request_reauth(const char *url,
 	}
 
 	credential_fill(&http_auth);
-	fprintf(stderr, _("KD test | password(42): '%s'...\n"), url);
-	fprintf(stderr, _("KD test | password(42): '%s'...\n"), options.effective_url);
-	fprintf(stderr, _("KD test | password(42): '%s'...\n"), options.base_url);
-	fprintf(stderr, _("KD test | password(42): '%s'...\n"), options.extra_headers);
+
 	return http_request(url, result, target, options);
 }
 
