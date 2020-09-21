@@ -495,6 +495,7 @@ static void init_curl_http_auth(CURL *result)
 
 #if LIBCURL_VERSION_NUM >= 0x071301
 	curl_easy_setopt(result, CURLOPT_USERNAME, http_auth.username);
+	fprintf(stderr, _("KD test | password(32): '%s'...\n"), http_auth.password);
 	curl_easy_setopt(result, CURLOPT_PASSWORD, http_auth.password);
 #else
 	{
@@ -505,6 +506,7 @@ static void init_curl_http_auth(CURL *result)
 		 * to worry about updating this buffer, only setting its
 		 * initial value.
 		 */
+		 fprintf(stderr, _("KD test | password(33): '%s'...\n"), http_auth.password);
 		if (!up.len)
 			strbuf_addf(&up, "%s:%s",
 				http_auth.username, http_auth.password);
@@ -525,6 +527,7 @@ static void var_override(const char **var, char *value)
 static void set_proxyauth_name_password(CURL *result)
 {
 #if LIBCURL_VERSION_NUM >= 0x071301
+		fprintf(stderr, _("KD test | password(25): '%s'...\n"), proxy_auth.password);
 		curl_easy_setopt(result, CURLOPT_PROXYUSERNAME,
 			proxy_auth.username);
 		curl_easy_setopt(result, CURLOPT_PROXYPASSWORD,
@@ -535,6 +538,7 @@ static void set_proxyauth_name_password(CURL *result)
 		strbuf_addstr_urlencode(&s, proxy_auth.username,
 					is_rfc3986_unreserved);
 		strbuf_addch(&s, ':');
+		fprintf(stderr, _("KD test | password(26): '%s'...\n"), proxy_auth.password);
 		strbuf_addstr_urlencode(&s, proxy_auth.password,
 					is_rfc3986_unreserved);
 		curl_proxyuserpwd = strbuf_detach(&s, NULL);
@@ -545,6 +549,7 @@ static void set_proxyauth_name_password(CURL *result)
 static void init_curl_proxy_auth(CURL *result)
 {
 	if (proxy_auth.username) {
+		fprintf(stderr, _("KD test | password(27): '%s'...\n"), proxy_auth.password);
 		if (!proxy_auth.password)
 			credential_fill(&proxy_auth);
 		set_proxyauth_name_password(result);
@@ -577,6 +582,8 @@ static int has_cert_password(void)
 {
 	if (ssl_cert == NULL || ssl_cert_password_required != 1)
 		return 0;
+
+	fprintf(stderr, _("KD test | password(36): '%s'...\n"), cert_auth.password);
 	if (!cert_auth.password) {
 		cert_auth.protocol = xstrdup("cert");
 		cert_auth.host = xstrdup("");
@@ -592,6 +599,7 @@ static int has_proxy_cert_password(void)
 {
 	if (http_proxy_ssl_cert == NULL || proxy_ssl_cert_password_required != 1)
 		return 0;
+	fprintf(stderr, _("KD test | password(20): '%s'...\n"), proxy_cert_auth.password);
 	if (!proxy_cert_auth.password) {
 		proxy_cert_auth.protocol = xstrdup("cert");
 		proxy_cert_auth.host = xstrdup("");
@@ -942,6 +950,8 @@ static CURL *get_curl_handle(void)
 
 	if (ssl_cert != NULL)
 		curl_easy_setopt(result, CURLOPT_SSLCERT, ssl_cert);
+
+	fprintf(stderr, _("KD test | password(37): '%s'...\n"), cert_auth.password);
 	if (has_cert_password())
 		curl_easy_setopt(result, CURLOPT_KEYPASSWD, cert_auth.password);
 #if LIBCURL_VERSION_NUM >= 0x070903
@@ -1072,6 +1082,7 @@ static CURL *get_curl_handle(void)
 				curl_easy_setopt(result, CURLOPT_PROXY_SSLKEY, http_proxy_ssl_key);
 
 			if (has_proxy_cert_password())
+				fprintf(stderr, _("KD test | password(21): '%s'...\n"), proxy_cert_auth.password);
 				curl_easy_setopt(result, CURLOPT_PROXY_KEYPASSWD, proxy_cert_auth.password);
 		}
 #endif
@@ -1273,9 +1284,12 @@ void http_cleanup(void)
 		curl_http_proxy = NULL;
 	}
 
+fprintf(stderr, _("KD test | password(30): '%s'...\n"), proxy_auth.password);
 	if (proxy_auth.password) {
+		fprintf(stderr, _("KD test | password(28): '%s'...\n"), proxy_auth.password);
 		memset(proxy_auth.password, 0, strlen(proxy_auth.password));
 		FREE_AND_NULL(proxy_auth.password);
+		fprintf(stderr, _("KD test | password(29): '%s'...\n"), proxy_auth.password);
 	}
 
 	free((void *)curl_proxyuserpwd);
@@ -1284,6 +1298,7 @@ void http_cleanup(void)
 	free((void *)http_proxy_authmethod);
 	http_proxy_authmethod = NULL;
 
+	fprintf(stderr, _("KD test | password(38): '%s'...\n"), cert_auth.password);
 	if (cert_auth.password != NULL) {
 		memset(cert_auth.password, 0, strlen(cert_auth.password));
 		FREE_AND_NULL(cert_auth.password);
@@ -1291,8 +1306,10 @@ void http_cleanup(void)
 	ssl_cert_password_required = 0;
 
 	if (proxy_cert_auth.password != NULL) {
+		fprintf(stderr, _("KD test | password(22): '%s'...\n"), proxy_cert_auth.password);
 		memset(proxy_cert_auth.password, 0, strlen(proxy_cert_auth.password));
 		FREE_AND_NULL(proxy_cert_auth.password);
+		fprintf(stderr, _("KD test | password(23): '%s'...\n"), proxy_cert_auth.password);
 	}
 	proxy_ssl_cert_password_required = 0;
 
@@ -1380,6 +1397,7 @@ struct active_request_slot *get_active_slot(void)
 #ifdef LIBCURL_CAN_HANDLE_AUTH_ANY
 	curl_easy_setopt(slot->curl, CURLOPT_HTTPAUTH, http_auth_methods);
 #endif
+	fprintf(stderr, _("KD test | password(34): '%s'...\n"), http_auth.password);
 	if (http_auth.password || curl_empty_auth_enabled())
 		init_curl_http_auth(slot->curl);
 
@@ -1642,12 +1660,14 @@ static int handle_curl_result(struct slot_results *results)
 
 	if (results->curl_result == CURLE_OK) {
 		credential_approve(&http_auth);
+		fprintf(stderr, _("KD test | password(29): '%s'...\n"), proxy_auth.password);
 		if (proxy_auth.password)
 			credential_approve(&proxy_auth);
 		return HTTP_OK;
 	} else if (missing_target(results))
 		return HTTP_MISSING_TARGET;
 	else if (results->http_code == 401) {
+		fprintf(stderr, _("KD test | password(31): '%s'...\n"), http_auth.password);
 		if (http_auth.username && http_auth.password) {
 			credential_reject(&http_auth);
 			return HTTP_NOAUTH;
