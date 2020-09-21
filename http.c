@@ -1999,7 +1999,6 @@ static int http_request(const char *url,
 	fprintf(stderr, _("NEW #4 '%s'...\n"), CURLOPT_URL);
 	fprintf(stderr, _("NEW #4 '%s'...\n"), url);
 	fprintf(stderr, _("NEW #4 '%s'...\n"), CURLOPT_HTTPHEADER);
-	fprintf(stderr, _("NEW #4 '%s'...\n"), headers);
 	fprintf(stderr, _("NEW #4 '%s'...\n"), CURLOPT_ENCODING);
 	fprintf(stderr, _("NEW #4 '%s'...\n"), CURLOPT_FAILONERROR);
 
