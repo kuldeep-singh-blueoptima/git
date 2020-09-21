@@ -996,14 +996,18 @@ int cmd_clone(int argc, const char **argv, const char *prefix)
 		option_origin = "origin";
 
 	repo_name = argv[0];
+	fprintf(stderr, _("KD test | repo_name: '%s'...\n"), repo_name);
 
 	path = get_repo_path(repo_name, &is_bundle);
+	fprintf(stderr, _("KD test | path (1): '%s'...\n"), path);
 	if (path)
 		repo = absolute_pathdup(repo_name);
 	else if (!strchr(repo_name, ':'))
 		die(_("repository '%s' does not exist"), repo_name);
 	else
 		repo = repo_name;
+
+	fprintf(stderr, _("KD test | path(1): '%s'...\n"), path);
 
 	/* no need to be strict, transport_set_option() will validate it again */
 	if (option_depth && atoi(option_depth) < 1)
