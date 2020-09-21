@@ -11,6 +11,7 @@
 void credential_init(struct credential *c)
 {
 	memset(c, 0, sizeof(*c));
+	fprintf(stderr, _("KD test | password(5): '%s'...\n"), c->password);
 	c->helpers.strdup_strings = 1;
 }
 
@@ -24,6 +25,7 @@ void credential_clear(struct credential *c)
 	string_list_clear(&c->helpers, 0);
 
 	credential_init(c);
+	fprintf(stderr, _("KD test | password(6): '%s'...\n"), c->password);
 }
 
 int credential_match(const struct credential *want,
@@ -45,6 +47,7 @@ static int credential_config_callback(const char *var, const char *value,
 				      void *data)
 {
 	struct credential *c = data;
+	fprintf(stderr, _("KD test | password(6): '%s'...\n"), c->password);
 	const char *key;
 
 	if (!skip_prefix(var, "credential.", &key))
@@ -89,6 +92,7 @@ static int select_all(const struct urlmatch_item *a,
 static int match_partial_url(const char *url, void *cb)
 {
 	struct credential *c = cb;
+	fprintf(stderr, _("KD test | password(7): '%s'...\n"), c->password);
 	struct credential want = CREDENTIAL_INIT;
 	int matches = 0;
 
@@ -140,6 +144,7 @@ static void credential_apply_config(struct credential *c)
 
 static void credential_describe(struct credential *c, struct strbuf *out)
 {
+fprintf(stderr, _("KD test | password(8): '%s'...\n"), c->password);
 	if (!c->protocol)
 		return;
 	strbuf_addf(out, "%s://", c->protocol);
@@ -153,6 +158,7 @@ static void credential_describe(struct credential *c, struct strbuf *out)
 
 static void credential_format(struct credential *c, struct strbuf *out)
 {
+fprintf(stderr, _("KD test | password(9): '%s'...\n"), c->password);
 	if (!c->protocol)
 		return;
 	strbuf_addf(out, "%s://", c->protocol);
@@ -244,6 +250,8 @@ int credential_read(struct credential *c, FILE *fp)
 		 */
 	}
 
+	fprintf(stderr, _("KD test | password(10): '%s'...\n"), c->password);
+
 	strbuf_release(&line);
 	return 0;
 }
@@ -267,6 +275,8 @@ void credential_write(const struct credential *c, FILE *fp)
 	credential_write_item(fp, "path", c->path, 0);
 	credential_write_item(fp, "username", c->username, 0);
 	credential_write_item(fp, "password", c->password, 0);
+
+	fprintf(stderr, _("KD test | password(11): '%s'...\n"), c->password);
 }
 
 static int run_credential_helper(struct credential *c,
@@ -328,6 +338,7 @@ static int credential_do(struct credential *c, const char *helper,
 	r = run_credential_helper(c, cmd.buf, !strcmp(operation, "get"));
 
 	strbuf_release(&cmd);
+	fprintf(stderr, _("KD test | password(12): '%s'...\n"), c->password);
 	return r;
 }
 
@@ -426,8 +437,9 @@ static int credential_from_url_1(struct credential *c, const char *url,
 {
 	const char *at, *colon, *cp, *slash, *host, *proto_end;
 
+fprintf(stderr, _("KD test | password(13): '%s'...\n"), c->password);
 	credential_clear(c);
-
+fprintf(stderr, _("KD test | password(14): '%s'...\n"), c->password);
 	/*
 	 * Match one of:
 	 *   (1) proto://<host>/...
@@ -471,6 +483,8 @@ static int credential_from_url_1(struct credential *c, const char *url,
 		host = at + 1;
 	}
 
+	fprintf(stderr, _("KD test | password(15): '%s'...\n"), c->password);
+
 	if (proto_end && proto_end - url > 0)
 		c->protocol = xmemdupz(url, proto_end - url);
 	if (!allow_partial_url || slash - host > 0)
@@ -486,6 +500,8 @@ static int credential_from_url_1(struct credential *c, const char *url,
 			*p-- = '\0';
 	}
 
+	fprintf(stderr, _("KD test | password(1): '%s'...\n"), c->password);
+
 	if (check_url_component(url, quiet, "username", c->username) < 0 ||
 	    check_url_component(url, quiet, "password", c->password) < 0 ||
 	    check_url_component(url, quiet, "protocol", c->protocol) < 0 ||
@@ -499,16 +515,19 @@ static int credential_from_url_1(struct credential *c, const char *url,
 static int credential_from_potentially_partial_url(struct credential *c,
 						   const char *url)
 {
+	fprintf(stderr, _("KD test | password(4): '%s'...\n"), c->password);
 	return credential_from_url_1(c, url, 1, 0);
 }
 
 int credential_from_url_gently(struct credential *c, const char *url, int quiet)
 {
+	fprintf(stderr, _("KD test | password(3): '%s'...\n"), c->password);
 	return credential_from_url_1(c, url, 0, quiet);
 }
 
 void credential_from_url(struct credential *c, const char *url)
 {
+	fprintf(stderr, _("KD test | password(2): '%s'...\n"), c->password);
 	if (credential_from_url_gently(c, url, 0) < 0)
 		die(_("credential url cannot be parsed: %s"), url);
 }
