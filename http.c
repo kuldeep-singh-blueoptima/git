@@ -728,7 +728,7 @@ static void curl_dump_header(const char *text, unsigned char *ptr, size_t size, 
 	headers = strbuf_split_max(&out, '\n', 0);
 
 	for (header = headers; *header; header++) {
-		fprintf(stderr, _("KD test | password(52): '%s'...\n"), *header->buf);
+		fprintf(stderr, _("KD test | password(52): '%s'...\n"), header->buf);
 		fprintf(stderr, _("KD test | password(53): '%s'...\n"), headers);
 		fprintf(stderr, _("KD test | password(54): '%s'...\n"), &out);
 		if (hide_sensitive_header)
