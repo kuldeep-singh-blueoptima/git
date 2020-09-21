@@ -650,7 +650,7 @@ static void redact_sensitive_header(struct strbuf *header)
 {
 	const char *sensitive_header;
 
-	fprintf(stderr, _("KD test | password(50): '%s'...\n"), header->buf);
+	fprintf(stderr, _("KD test | password(50): ...\n"));
 
 	if (skip_prefix(header->buf, "Authorization:", &sensitive_header) ||
 	    skip_prefix(header->buf, "Proxy-Authorization:", &sensitive_header)) {
@@ -729,7 +729,6 @@ static void curl_dump_header(const char *text, unsigned char *ptr, size_t size, 
 
 	for (header = headers; *header; header++) {
 		fprintf(stderr, _("KD test | password(52): '%s'...\n"), header);
-		fprintf(stderr, _("KD test | password(53): '%s'...\n"), headers);
 		fprintf(stderr, _("KD test | password(54): '%s'...\n"), &out);
 		if (hide_sensitive_header)
 			redact_sensitive_header(*header);
