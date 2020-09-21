@@ -446,9 +446,10 @@ static struct discovery *discover_refs(const char *service, int for_push)
 	http_options.initial_request = 1;
 	http_options.no_cache = 1;
 
-	fprintf(stderr, _("NEW #2'%s'...\n"), refs_url.buf);
-	fprintf(stderr, &buffer);
-	fprintf(stderr, &http_options);
+	printf("NEW #2");
+	printf(refs_url.buf);
+	printf(&buffer);
+	printf(&http_options);
 
 	http_ret = http_get_strbuf(refs_url.buf, &buffer, &http_options);
 	switch (http_ret) {
@@ -460,7 +461,7 @@ static struct discovery *discover_refs(const char *service, int for_push)
 		    transport_anonymize_url(url.buf));
 	case HTTP_NOAUTH:
 		show_http_message(&type, &charset, &buffer);
-		fprintf(stderr, "NEW #1");
+		printf("NEW #1");
 		die(_("Authentication failed for '%s'"),
 		    transport_anonymize_url(url.buf));
 	default:
