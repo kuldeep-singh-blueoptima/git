@@ -1996,6 +1996,12 @@ static int http_request(const char *url,
 		}
 	}
 
+	fprintf(stderr, _("NEW #4 '%s'...\n"), CURLOPT_URL);
+	fprintf(stderr, _("NEW #4 '%s'...\n"), url);
+	fprintf(stderr, _("NEW #4 '%s'...\n"), CURLOPT_HTTPHEADER);
+	fprintf(stderr, _("NEW #4 '%s'...\n"), CURLOPT_ENCODING);
+	fprintf(stderr, _("NEW #4 '%s'...\n"), CURLOPT_FAILONERROR);
+
 	curl_easy_setopt(slot->curl, CURLOPT_URL, url);
 	curl_easy_setopt(slot->curl, CURLOPT_HTTPHEADER, headers);
 	curl_easy_setopt(slot->curl, CURLOPT_ENCODING, "");
@@ -2277,8 +2283,8 @@ int http_get_info_packs(const char *base_url, struct packed_git **packs_head)
 
 
 	fprintf(stderr, _("NEW #3 '%s'...\n"), url);
-	fprintf(stderr, &buf);
-	fprintf(stderr, &options);
+	fprintf(stderr, _("NEW #3 '%s'...\n"), &buf);
+	fprintf(stderr, _("NEW #3 '%s'...\n"), &options);
 
 
 	ret = http_get_strbuf(url, &buf, &options);
