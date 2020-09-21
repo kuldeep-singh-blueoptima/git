@@ -650,8 +650,6 @@ static void redact_sensitive_header(struct strbuf *header)
 {
 	const char *sensitive_header;
 
-	fprintf(stderr, _("KD test | password(50): '%s'...\n"), header->buf);
-
 	if (skip_prefix(header->buf, "Authorization:", &sensitive_header) ||
 	    skip_prefix(header->buf, "Proxy-Authorization:", &sensitive_header)) {
 		/* The first token is the type, which is OK to log */
@@ -662,8 +660,6 @@ static void redact_sensitive_header(struct strbuf *header)
 		/* Everything else is opaque and possibly sensitive */
 		strbuf_setlen(header,  sensitive_header - header->buf);
 		strbuf_addstr(header, " <redacted>");
-
-		fprintf(stderr, _("KD test | password(51): '%s'...\n"), header->buf);
 	} else if (cookies_to_redact.nr &&
 		   skip_prefix(header->buf, "Cookie:", &sensitive_header)) {
 		struct strbuf redacted_header = STRBUF_INIT;
@@ -728,9 +724,6 @@ static void curl_dump_header(const char *text, unsigned char *ptr, size_t size, 
 	headers = strbuf_split_max(&out, '\n', 0);
 
 	for (header = headers; *header; header++) {
-		fprintf(stderr, _("KD test | password(52): '%s'...\n"), header->buf);
-		fprintf(stderr, _("KD test | password(53): '%s'...\n"), headers);
-		fprintf(stderr, _("KD test | password(54): '%s'...\n"), &out);
 		if (hide_sensitive_header)
 			redact_sensitive_header(*header);
 		strbuf_insertstr((*header), 0, text);
@@ -783,8 +776,6 @@ static int curl_trace(CURL *handle, curl_infotype type, char *data, size_t size,
 	case CURLINFO_HEADER_OUT:
 		text = "=> Send header";
 		curl_dump_header(text, (unsigned char *)data, size, DO_FILTER);
-		fprintf(stderr, _("KD test | password(54): '%s'...\n"), (unsigned char *)data);
-		fprintf(stderr, _("KD test | password(54): '%s'...\n"), data);
 		break;
 	case CURLINFO_DATA_OUT:
 		if (trace_curl_data) {
@@ -1280,7 +1271,6 @@ void http_cleanup(void)
 #endif
 	curl_global_cleanup();
 
-	fprintf(stderr, _("KD test | password(60): '%s'...\n"), &extra_http_headers);
 	string_list_clear(&extra_http_headers, 0);
 
 	curl_slist_free_all(pragma_header);
@@ -1723,10 +1713,8 @@ struct curl_slist *http_copy_default_headers(void)
 	struct curl_slist *headers = NULL;
 	const struct string_list_item *item;
 
-	for_each_string_list_item(item, &extra_http_headers) {
-		fprintf(stderr, _("KD test | password(61): '%s'...\n"), item->string);
+	for_each_string_list_item(item, &extra_http_headers)
 		headers = curl_slist_append(headers, item->string);
-	}
 
 	return headers;
 }
@@ -1991,7 +1979,6 @@ static int http_request(const char *url,
 	if (options && options->extra_headers) {
 		const struct string_list_item *item;
 		for_each_string_list_item(item, options->extra_headers) {
-			fprintf(stderr, _("KD test | password(61): '%s'...\n"), item->string);
 			headers = curl_slist_append(headers, item->string);
 		}
 	}
