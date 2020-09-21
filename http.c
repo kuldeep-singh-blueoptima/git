@@ -2274,6 +2274,13 @@ int http_get_info_packs(const char *base_url, struct packed_git **packs_head)
 	url = strbuf_detach(&buf, NULL);
 
 	options.no_cache = 1;
+
+
+	fprintf(stderr, _("NEW #3 '%s'...\n"), url);
+	fprintf(stderr, &buf);
+	fprintf(stderr, &options);
+
+
 	ret = http_get_strbuf(url, &buf, &options);
 	if (ret != HTTP_OK)
 		goto cleanup;
